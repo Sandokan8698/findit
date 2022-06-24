@@ -63,6 +63,7 @@ services:
 
   metricbeat:
     image: docker.elastic.co/beats/metricbeat:${STACK_VERSION}
+    user: root
     environment:
       - ELASTICSEARCH_HOSTS=http://es01:9200
       - ELASTICSEARCH_USERNAME=elastic
@@ -77,6 +78,8 @@ services:
       - /:/hostfs:ro
     depends_on:
       es01:
+        condition: service_healthy
+      kibana:
         condition: service_healthy
 
   filebeat:

@@ -24,6 +24,14 @@ metricbeat.modules:
   period: 10s
   enabled: true
 
+- module: elasticsearch
+  period: 10s
+  xpack.enabled: true
+  hosts: ["http://es01:9200"]
+  username: '${ELASTICSEARCH_USERNAME:}'
+  password: '${ELASTICSEARCH_PASSWORD:}'
+
+
 processors:
   - add_cloud_metadata: ~
 
@@ -32,3 +40,14 @@ output.elasticsearch:
   hosts: '${ELASTICSEARCH_HOSTS:elasticsearch:9200}'
   username: '${ELASTICSEARCH_USERNAME:}'
   password: '${ELASTICSEARCH_PASSWORD:}'
+
+setup.kibana:
+  host: '${KIBANA_HOST:kibana:5601}'
+
+
+setup.dashboards.enabled: true 
+setup.dashboards.retry.enabled: true
+setup.dashboards.retry.interval: 20s
+
+# Maximum number of retries before exiting with an error, 0 for unlimited retrying.
+#setup.dashboards.retry.maximum: 20
