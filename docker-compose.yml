@@ -51,9 +51,10 @@ services:
         find . -type d -exec chmod 750 \{\} \;;
         find . -type f -exec chmod 640 \{\} \;;
         echo "Waiting for Elasticsearch availability";
-        until curl -s --cacert config/certs/ca/ca.crt https://es01:9200 | grep -q "missing authentication credentials"; do sleep 30; done;
         echo "Setting kibana_system password";
-        until curl -s -X POST --cacert config/certs/ca/ca.crt -u elastic:${ELASTIC_PASSWORD} -H "Content-Type: application/json" https://es01:9200/_security/user/kibana_system/_password -d "{\"password\":\"${KIBANA_PASSWORD}\"}" | grep -q "^{}"; do sleep 10; done;
+        until curl -s -X POST -u elastic:${ELASTIC_PASSWORD} -H "Content-Type: application/json" http://es01:9200/_security/user/kibana_system/_password -d "{\"password\":\"${KIBANA_PASSWORD}\"}" | grep -q "^{}"; do sleep 10; done;
+        echo "Setting beats_system password";
+        until curl -s -X POST -u elastic:${ELASTIC_PASSWORD} -H "Content-Type: application/json" http://es01:9200/_security/user/beats_system/_password -d "{\"password\":\"${BEATS_PASSWORD}\"}" | grep -q "^{}"; do sleep 10; done;
         echo "All done!";
       '
     healthcheck:
@@ -68,7 +69,6 @@ services:
         condition: service_healthy
     image: docker.elastic.co/elasticsearch/elasticsearch:${STACK_VERSION}
     volumes:
-      - certs:/usr/share/elasticsearch/config/certs
       - esdata01:/usr/share/elasticsearch/data
     ports:
       - ${ES_PORT}:9200
@@ -80,17 +80,7 @@ services:
       - discovery.type=single-node
       - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
       - bootstrap.memory_lock=true
-      - xpack.security.enabled=true
-      - xpack.security.http.ssl.enabled=true
-      - xpack.security.http.ssl.key=certs/es01/es01.key
-      - xpack.security.http.ssl.certificate=certs/es01/es01.crt
-      - xpack.security.http.ssl.certificate_authorities=certs/ca/ca.crt
-      - xpack.security.http.ssl.verification_mode=certificate
-      - xpack.security.transport.ssl.enabled=true
-      - xpack.security.transport.ssl.key=certs/es01/es01.key
-      - xpack.security.transport.ssl.certificate=certs/es01/es01.crt
-      - xpack.security.transport.ssl.certificate_authorities=certs/ca/ca.crt
-      - xpack.security.transport.ssl.verification_mode=certificate
+      - xpack.security.http.ssl.enabled=false
       - xpack.license.self_generated.type=${LICENSE}
     mem_limit: ${MEM_LIMIT}
     ulimits:
@@ -101,7 +91,7 @@ services:
       test:
         [
           "CMD-SHELL",
-          "curl -s --cacert config/certs/ca/ca.crt https://localhost:9200 | grep -q 'missing authentication credentials'"
+          "curl -s http://localhost:9200 | grep -q 'missing authentication credentials'"
         ]
       interval: 10s
       timeout: 10s
@@ -117,16 +107,14 @@ services:
         # condition: service_healthy
     image: docker.elastic.co/kibana/kibana:${STACK_VERSION}
     volumes:
-      - certs:/usr/share/kibana/config/certs
       - kibanadata:/usr/share/kibana/data
     ports:
       - ${KIBANA_PORT}:5601
     environment:
       - SERVERNAME=kibana
-      - ELASTICSEARCH_HOSTS=https://es01:9200
+      - ELASTICSEARCH_HOSTS=http://es01:9200
       - ELASTICSEARCH_USERNAME=kibana_system
       - ELASTICSEARCH_PASSWORD=${KIBANA_PASSWORD}
-      - ELASTICSEARCH_SSL_CERTIFICATEAUTHORITIES=config/certs/ca/ca.crt
     mem_limit: ${MEM_LIMIT}
     healthcheck:
       test:
@@ -138,6 +126,39 @@ services:
       timeout: 10s
       retries: 120
 
+  metricbeat:
+    image: docker.elastic.co/beats/metricbeat:${STACK_VERSION}
+    environment:
+      - ELASTICSEARCH_HOSTS=http://es01:9200
+      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_PASSWORD=${BEATS_PASSWORD}
+    mem_limit: ${BEATS_MEM_LIMIT}
+    volumes:
+      - metricbeatdata:/usr/share/metricbeat/data
+      - ./metricbeat.yml:/modules.d/metricbeat.yml:ro
+    depends_on:
+      es01:
+        condition: service_healthy
+
+  filebeat:
+    user: root
+    container_name: filebeat
+    image: docker.elastic.co/beats/filebeat:${STACK_VERSION}
+    depends_on:
+      es01:
+        condition: service_healthy
+    environment:
+      - ELASTICSEARCH_HOSTS=http://es01:9200
+      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_PASSWORD=${BEATS_PASSWORD}
+    volumes:
+      - /var/run/docker.sock:/host_docker/docker.sock
+      - /var/lib/docker:/host_docker/var/lib/docker
+      - ./mylog:/usr/share/filebeat/mylog
+      - ./filebeat.yml:/usr/share/filebeat/filebeat.yml
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+    command: [ "--strict.perms=false" ]
+
 volumes:
   certs:
     driver: local
@@ -148,4 +169,6 @@ volumes:
   esdata03:
     driver: local
   kibanadata:
+    driver: local
+  metricbeatdata:
     driver: local
