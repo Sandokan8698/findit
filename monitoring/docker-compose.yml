@@ -73,8 +73,8 @@ services:
       - metricbeatdata:/usr/share/metricbeat/data
       - ./metricbeat.yml:/usr/share/metricbeat/metricbeat.yml:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - /sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro
-      - /proc:/hostfs/proc:ro
+      #- /sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro
+      #- /proc:/hostfs/proc:ro
       - /:/hostfs:ro
     depends_on:
       es01:
@@ -96,9 +96,9 @@ services:
     volumes:
       - /var/run/docker.sock:/host_docker/docker.sock
       - /var/lib/docker:/host_docker/var/lib/docker
-      - ./mylog:/usr/share/filebeat/mylog
       - ./filebeat.yml:/usr/share/filebeat/filebeat.yml
       - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - ../applogs:/applogs
     command: [ "--strict.perms=false" ]
 
 volumes:
@@ -114,3 +114,5 @@ volumes:
     driver: local
   metricbeatdata:
     driver: local
+  applogs:
+    external: true
