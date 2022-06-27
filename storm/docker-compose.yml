@@ -1,10 +1,15 @@
+version: '2.2'
+
 services:
   zookeeper:
     image: zookeeper
     container_name: zookeeper
     restart: unless-stopped
     volumes:
-      - zookeeper_data:/data
+      - ./data/zookeeper:/data
+      - ./zoo.cfg:/conf/zoo.cfg:ro
+    ports:
+      - 2181:2181
 
 
   nimbus:
@@ -15,20 +20,23 @@ services:
       - zookeeper
     restart: unless-stopped
     volumes:
-      - ./topologies:/data
+      - ./data/nimbus:/data
+      - ./topologies:/topologies
       - ../applogs/nimbus:/logs
-      - ./storm.yml:/apache-storm-2.4.0/conf/storm.yml:ro
+      - ./storm.yaml:/conf/storm.yaml
     ports:
       - 6627:6627
 
   supervisor:
     image: storm
     container_name: supervisor
-    command: storm supervisor
+    command:  storm supervisor
     depends_on:
-      - nimbus
       - zookeeper
+      - nimbus
     volumes:
+      - ./supervisor.yaml:/conf/storm.yaml
+      - ./data/supervisor:/data
       - ../applogs/supervisor:/logs
     restart: unless-stopped
 
@@ -42,7 +50,7 @@ services:
     volumes:
       - ../applogs/stormui:/logs
     ports:
-      - 8080:8080
+      - 8001:8080
     restart: unless-stopped
 
 volumes:

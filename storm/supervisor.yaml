@@ -16,9 +16,9 @@ worker.childopts: "-Xmx%HEAP-MEM%m -XX:+PrintGCDetails -Xloggc:artifacts/gc.log 
 
 
 ### storm.* configs are general configurations
-storm.conf.file: storm.yaml
+storm.conf.file: supervisor.yaml
 storm.local.dir: /data
-storm.local.hostname: "nimbus"
+storm.local.hostname: "supervisor"
 storm.log.dir: /logs
 storm.zookeeper.port: 2181
 storm.zookeeper.servers:

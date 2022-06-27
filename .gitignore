@@ -1,5 +1,5 @@
 .idea/
 .DS_Store
 applogs/
-storm/topologies/blobs
-storm/topologies/nimbus
+storm/topologies/
+storm/data/
