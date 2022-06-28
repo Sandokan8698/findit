@@ -26,11 +26,17 @@ services:
       - ./storm.yaml:/conf/storm.yaml
     ports:
       - 6627:6627
+      - 8000:8000
 
   supervisor:
     image: storm
-    container_name: supervisor
-    command:  storm supervisor
+    #container_name: supervisor
+    command: 
+      - /bin/bash
+      - -c
+      - |
+        storm logviewer &
+        storm supervisor
     depends_on:
       - zookeeper
       - nimbus
@@ -39,6 +45,8 @@ services:
       - ./data/supervisor:/data
       - ../applogs/supervisor:/logs
     restart: unless-stopped
+    ports:
+      - 8002:8002
 
   stormui:
     image: storm

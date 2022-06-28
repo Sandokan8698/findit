@@ -18,9 +18,19 @@ worker.childopts: "-Xmx%HEAP-MEM%m -XX:+PrintGCDetails -Xloggc:artifacts/gc.log 
 ### storm.* configs are general configurations
 storm.conf.file: supervisor.yaml
 storm.local.dir: /data
-storm.local.hostname: "supervisor"
+#storm.local.hostname: "supervisor"
 storm.log.dir: /logs
 storm.zookeeper.port: 2181
 storm.zookeeper.servers:
      - "zookeeper"
+
+logviewer.port: 8002
+logviewer.childopts: "-Xmx128m"
+logviewer.cleanup.age.mins: 10080
+logviewer.appender.name: "A1"
+logviewer.max.sum.worker.logs.size.mb: 4096
+logviewer.max.per.worker.logs.size.mb: 2048
+logviewer.disable.http.binding: true
+logviewer.filter: null
+logviewer.filter.params: null
 
