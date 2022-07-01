@@ -35,7 +35,6 @@ services:
       - /bin/bash
       - -c
       - |
-        storm logviewer &
         storm supervisor
     depends_on:
       - zookeeper
@@ -45,8 +44,6 @@ services:
       - ./data/supervisor:/data
       - ../applogs/supervisor:/logs
     restart: unless-stopped
-    ports:
-      - 8002:8002
 
   stormui:
     image: storm
