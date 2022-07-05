@@ -1,0 +1,10 @@
+
+config:
+  nimbus.task.timeout.secs: 1200
+  nimbus.supervisor.timeout.secs: 1200
+
+  #how long between heartbeats until supervisor considers that worker dead and tries to restart it
+  supervisor.worker.timeout.secs: 1200
+
+  #For topology configurable heartbeat timeout, maximum allowed heartbeat timeout.
+  worker.max.timeout.secs: 1200

@@ -1,0 +1,13 @@
+{
+  "com.digitalpebble.stormcrawler.parse.JSoupFilters": [
+    {
+      "class": "com.digitalpebble.stormcrawler.jsoup.XPathFilter",
+      "name": "XPathFilter",
+      "params": {
+        "parse.item": [
+          "//div[@data-is-channel=\"1\"]"
+        ]
+      }
+    }
+  ]
+}
