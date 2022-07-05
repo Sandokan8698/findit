@@ -10,6 +10,8 @@ services:
       - ./zoo.cfg:/conf/zoo.cfg:ro
     ports:
       - 2181:2181
+    networks:
+      - findit
 
 
   nimbus:
@@ -27,6 +29,8 @@ services:
     ports:
       - 6627:6627
       - 8000:8000
+    networks:
+      - findit
 
   supervisor:
     image: storm
@@ -45,6 +49,8 @@ services:
       - ./topologies:/topologies
       - ../applogs/supervisor:/logs
     restart: unless-stopped
+    networks:
+      - findit
 
   stormui:
     image: storm
@@ -58,7 +64,14 @@ services:
     ports:
       - 8001:8080
     restart: unless-stopped
+    networks:
+      - findit
 
 volumes:
   zookeeper_data:
+
+
+networks:
+  findit:
+    external: true
 
