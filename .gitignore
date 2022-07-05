@@ -3,3 +3,4 @@
 applogs/
 storm/topologies/
 storm/data/
+crawler/target/

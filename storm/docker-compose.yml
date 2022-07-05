@@ -42,6 +42,7 @@ services:
     volumes:
       - ./supervisor.yaml:/conf/storm.yaml
       - ./data/supervisor:/data
+      - ./topologies:/topologies
       - ../applogs/supervisor:/logs
     restart: unless-stopped
 
