@@ -117,8 +117,8 @@ services:
     user: '104'
     volumes:
        - grafana:/var/lib/grafana grafana/grafana-enterprise
-  networks:
-       - findit
+    networks:
+      - findit
 
 
 volumes:
