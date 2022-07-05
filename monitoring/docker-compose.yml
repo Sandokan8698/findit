@@ -19,7 +19,7 @@ services:
       - xpack.security.enabled=true
       - xpack.security.http.ssl.enabled=false
       - xpack.license.self_generated.type=${LICENSE}
-      - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
+      - "ES_JAVA_OPTS=-Xms1g -Xmx2g"
     mem_limit: ${MEM_LIMIT}
     ulimits:
       memlock:
