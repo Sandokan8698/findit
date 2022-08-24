@@ -1,9 +1,9 @@
 ESHOST=${1:-"http://localhost:9200"}
-ESCREDENTIALS=${2:-"-u elastic:elastic"}
+ESCREDENTIALS=${2:-"elastic:elastic"}
 
 # deletes and recreates a status index with a bespoke schema
 
-curl $ESCREDENTIALS -s -XDELETE "$ESHOST/status/" >  /dev/null
+curl -u $ESCREDENTIALS -s -XDELETE "$ESHOST/status/" >  /dev/null
 
 echo "Deleted status index"
 
@@ -11,7 +11,7 @@ echo "Deleted status index"
 
 echo "Creating status index with mapping"
 
-curl $ESCREDENTIALS -s -XPUT $ESHOST/status -H 'Content-Type: application/json' -d '
+curl -u $ESCREDENTIALS -s -XPUT $ESHOST/status -H 'Content-Type: application/json' -d '
 {
 	"settings": {
 		"index": {
@@ -54,12 +54,12 @@ curl $ESCREDENTIALS -s -XPUT $ESHOST/status -H 'Content-Type: application/json' 
 
 # deletes and recreates a status index with a bespoke schema
 
-curl $ESCREDENTIALS -s -XDELETE "$ESHOST/storm-metrics*/" >  /dev/null
+curl -u $ESCREDENTIALS -s -XDELETE "$ESHOST/storm-metrics*/" >  /dev/null
 
 echo ""
 echo "Deleted metrics index"
 
-curl $ESCREDENTIALS -s -XPUT $ESHOST/_ilm/policy/7d-deletion_policy -H 'Content-Type:application/json' -d '
+curl -u $ESCREDENTIALS -s -XPUT $ESHOST/_ilm/policy/7d-deletion_policy -H 'Content-Type:application/json' -d '
 {
     "policy": {
         "phases": {
@@ -77,7 +77,7 @@ curl $ESCREDENTIALS -s -XPUT $ESHOST/_ilm/policy/7d-deletion_policy -H 'Content-
 echo "Creating metrics index with mapping"
 
 # http://localhost:9200/metrics/_mapping/status?pretty
-curl $ESCREDENTIALS -s -XPOST $ESHOST/_template/storm-metrics-template -H 'Content-Type: application/json' -d '
+curl -u $ESCREDENTIALS -s -XPOST $ESHOST/_template/storm-metrics-template -H 'Content-Type: application/json' -d '
 {
   "index_patterns": "storm-metrics*",
   "settings": {
@@ -122,14 +122,14 @@ curl $ESCREDENTIALS -s -XPOST $ESHOST/_template/storm-metrics-template -H 'Conte
 
 # deletes and recreates a doc index with a bespoke schema
 
-curl $ESCREDENTIALS -s -XDELETE "$ESHOST/content*/" >  /dev/null
+curl -u $ESCREDENTIALS -s -XDELETE "$ESHOST/content*/" >  /dev/null
 
 echo ""
 echo "Deleted content index"
 
 echo "Creating content index with mapping"
 
-curl $ESCREDENTIALS -s -XPUT $ESHOST/content -H 'Content-Type: application/json' -d '
+curl -u $ESCREDENTIALS -s -XPUT $ESHOST/content -H 'Content-Type: application/json' -d '
 {
 	"settings": {
 		"index": {

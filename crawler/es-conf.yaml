@@ -4,7 +4,7 @@ config:
   # ES indexer bolt
   # adresses can be specified as a full URL
   # if not we assume that the protocol is http and the port 9200
-  es.indexer.addresses: "es01"
+  es.indexer.addresses: "localhost"
   es.indexer.index.name: "content"
   # es.indexer.pipeline: "_PIPELINE_"
   es.indexer.create: false
@@ -20,7 +20,7 @@ config:
 
   
   # ES metricsConsumer
-  es.metrics.addresses: "http://es01:9200"
+  es.metrics.addresses: "http://localhost:9200"
   es.metrics.index.name: "metrics"
   es.metrics.user: "elastic"
   es.metrics.password: "elastic"
@@ -30,7 +30,7 @@ config:
   es.metrics.compatibility.mode: false
   
   # ES spout and persistence bolt
-  es.status.addresses: "http://es01:9200"
+  es.status.addresses: "http://localhost:9200"
   es.status.index.name: "status"
   es.status.user: "elastic"
   es.status.password: "elastic"
@@ -102,11 +102,3 @@ config:
          #  - "fetcher_average.bytes_fetched"
          #blacklist:
          #  - "__receive.*"
-
-  # configuration for the classes extending AbstractIndexerBolt
-  # indexer.md.filter: "someKey=aValue"
-  indexer.md.mapping:
-    - parse.title=title
-    - parse.keywords=keywords
-    - parse.description=description
-    - parse.item=item

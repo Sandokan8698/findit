@@ -5,16 +5,11 @@
       "name": "XPathFilter",
       "params": {
         "canonical": "//*[@rel=\"canonical\"]/@href",
-        "parse.description": [
-          "//*[@name=\"description\"]/@content",
-          "//*[@name=\"Description\"]/@content"
-        ],
         "parse.title": [
           "//TITLE/tidyText()",
           "//META[@name=\"title\"]/@content"
         ],
-        "parse.keywords": "//META[@name=\"keywords\"]/@content",
-        "parse.images": "//img/@src"
+        "parse.document": "//*"
       }
     },
     {
